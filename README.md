@@ -12,5 +12,11 @@ Ensure target_core_user kernel module is loaded.
 # Run
 
 ```bash
-# docker run -ti --privileged -v /lib/modules:/lib/modules gluster-block
+# docker run -ti --privileged -v /path/to/xfs:/vol -v /lib/modules:/lib/modules gluster-block
+```
+
+# All in one
+
+```bash
+# bash run.s
 ```

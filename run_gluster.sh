@@ -14,18 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DIR=`mktemp -d`
+DIR="/vol"
 
 function start()
 {
-    mount -t tmpfs test $DIR
-    chmod 755 $DIR
-    cp /vol/* $DIR/
     /usr/sbin/glusterd -p /run/glusterd.pid
     rpcbind
     /usr/bin/tcmu-runner &
     /usr/sbin/gluster-blockd & 
-    gluster volume create test_vol `hostname -i`:$DIR force
+    gluster volume create test_vol `hostname -i`:${DIR} force
     gluster volume start test_vol
     /usr/sbin/gluster-block create test_vol/vol1 ha 1 `hostname -i` 1GiB
 }
@@ -37,10 +34,13 @@ function stop()
     pkill -9 gluster-blockd
     pkill -9 tcmu-runner 
     pkill -9 rpcbind
-    umount $DIR
-    rm -rf $DIR
     exit 0
 }
+
+if [ ! -d ${DIR} ]
+then
+    echo "No gluster volume is bound to ${DIR}, exiting..."
+fi
 
 
 trap stop TERM
